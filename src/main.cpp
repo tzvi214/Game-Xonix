@@ -38,7 +38,12 @@ int main()
     }
 	sf::RenderWindow window(sf::VideoMode(col * 18, row * 18), "Xonix Game!");
 	window.setFramerateLimit(60);
+	Player player{ sf::Vector2f(0, 0), sTile };
+	Enemy enemy{ sf::Vector2f(5 *18, 5*18), sTile };
+    sf::Clock clock;
+    clock.restart();
     while (window.isOpen())
+		
     {
         sf::Event event;
         while (window.pollEvent(event))
@@ -46,6 +51,28 @@ int main()
             if (event.type == sf::Event::Closed)
                 window.close();
         }
+		float deltaTime = clock.restart().asSeconds();
+
+		clock.restart();
+		enemy.move(board, deltaTime); // Move the enemy with a delta time of 0.1 seconds
+		player.move(board, deltaTime); // Move the player with a delta time of 0.1 seconds
+        if (player.needToDoRecursion())
+        {
+			int row = int(enemy.getLocation().x) / 18;
+			int col = int(enemy.getLocation().y) / 18;
+			enemy.conquer(board, row, col);
+           
+        }
+        for (int i = 1; i <= 24; i++) {
+            for (int j = 1; j <= 24; j++) {
+                if ((!board[i][j]->exists())) {
+                    sf::Vector2f pos(i * 18.f, j * 18.f);
+                    board[i][j] = std::make_unique<FilledTile>(sTile, pos);
+                   // board[i][j] = std::make_unique<EmptyTile>(sTile, pos);
+                }
+            }
+        }
+        board[3][3] = std::make_unique<FilledTile>(sTile, sf::Vector2f ( 3*18.f, 3*18.f));
         window.clear();
         for (int i = 0; i < row; i++)
 
@@ -53,6 +80,9 @@ int main()
             {
                 board[i][j]->draw(window);
             }
+        player.draw(window);
+		enemy.draw(window);
+
 		window.display();
     }
     return EXIT_SUCCESS;
