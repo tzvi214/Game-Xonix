@@ -1,7 +1,9 @@
 #include "FilledTile.h"
 
 
-FilledTile::FilledTile(sf::Vector2f location, SfmlManager& SfmlMan) : Tile(location, sf::Sprite{ SfmlMan.getTilesTex() }) {}
+FilledTile::FilledTile(sf::Vector2f location, SfmlManager& SfmlMan) 
+	: Tile(location, sf::Sprite{ SfmlMan.getTilesTex() })
+{}
 
 void FilledTile::draw(sf::RenderWindow& window)
 {

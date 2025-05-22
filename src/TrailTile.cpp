@@ -3,7 +3,7 @@
 
 
 TrailTile::TrailTile(sf::Vector2f location, SfmlManager& SfmlMan) 
-	: Tile(location, sf::Sprite{ SfmlMan.getTilesTex() })  
+	: Tile(location, sf::Sprite{ SfmlMan.getTilesTex() })
 { }  
 
 void TrailTile::draw(sf::RenderWindow& window)  

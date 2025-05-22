@@ -56,6 +56,12 @@ public:
 	Player(sf::Vector2f location, SfmlManager& SfmlMan);
 	virtual ~Player() = default;
 	virtual void draw(sf::RenderWindow&) override;
-	// virtual void move(std::vector<std::unique_ptr<Tile>>&, float) override;
+	virtual void move(std::vector<std::vector<std::unique_ptr<Tile>>>&, float) override ;
 	virtual void move(float) override;
+private:
+	SfmlManager& m_sfmlManager;
+	sf::Vector2f ArrangeLocation(sf::Vector2f);
+	void chooseDirection();
+	int m_speed = 50;
+	bool m_inTrailMode = false;
 };

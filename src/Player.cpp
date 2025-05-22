@@ -162,10 +162,13 @@
 
 
 #include "Player.h"
+#include "Utility.h"
+#include "memory"
+#include "TrailTile.h"
 
-Player::Player(sf::Vector2f location, SfmlManager& SfmlMan) : MobileObject(location, sf::Sprite{ SfmlMan.getTilesTex() })
-{
-}
+Player::Player(sf::Vector2f location, SfmlManager& SfmlMan) 
+	: MobileObject(location, sf::Sprite{ SfmlMan.getTilesTex() }), m_sfmlManager{ SfmlMan }
+{}
 
 void Player::draw(sf::RenderWindow& window)
 {
@@ -173,6 +176,7 @@ void Player::draw(sf::RenderWindow& window)
 	m_sprite.setTextureRect(sf::IntRect(SIZE::TILE_SIZE * 1, 0, SIZE::TILE_SIZE, SIZE::TILE_SIZE));
 	window.draw(m_sprite);
 }
+
 
 void Player::move(float deltaTime)
 {
@@ -204,7 +208,73 @@ void Player::move(float deltaTime)
 
 }
 
-//void Player::move(std::vector<std::unique_ptr<Tile>>& board, float deltaTime)
-//{
-//
-//}
+
+void Player::move(std::vector<std::vector<std::unique_ptr<Tile>>>& board, float deltaTime)
+{
+	chooseDirection();
+	// i can check if i ainsid the board because of th vector !!
+		sf::Vector2f nextLoc = sf::Vector2f(m_location.x + (m_direction.x * deltaTime * m_speed),
+			                                m_location.y + (m_direction.y * deltaTime * m_speed));
+		
+		if (/*board[m_location.x / SIZE::TILE_SIZE][m_location.y / SIZE::TILE_SIZE]->isSave() &&*/
+			(!board[nextLoc.x / SIZE::TILE_SIZE][nextLoc.y / SIZE::TILE_SIZE]->isSave()))
+		{
+			//sf::Vector2f loc = ArrangeLocation(nextLoc);/*sf::Vector2f{ nextLoc.x / SIZE::TILE_SIZE, nextLoc.y / SIZE::TILE_SIZE }*/;
+
+			board[nextLoc.x / SIZE::TILE_SIZE][nextLoc.y / SIZE::TILE_SIZE] = std::move(std::make_unique<TrailTile>
+				(nextLoc, m_sfmlManager));
+
+
+		}
+
+		m_sprite.move(m_location.x + (m_direction.x * deltaTime * m_speed), 
+			          m_location.y + (m_direction.y * deltaTime * m_speed));
+		m_location = nextLoc;
+}
+//-------------------------------------
+sf::Vector2f Player::ArrangeLocation(sf::Vector2f loc)
+{
+	int newX = static_cast<int>(loc.x + SIZE::HalfPixelSize) / SIZE::TILE_SIZE;
+	int newY = static_cast<int>(loc.y + SIZE::HalfPixelSize) / SIZE::TILE_SIZE;
+	newX *= SIZE::TILE_SIZE;
+	newY *= SIZE::TILE_SIZE;
+	return sf::Vector2f{ static_cast<float>(newX), static_cast<float>(newY) };
+}
+//-------------------------------------
+void Player::chooseDirection()
+{
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+	{
+		if (m_direction != Directions::Left)
+		{
+			m_location = ArrangeLocation(m_location);
+		}
+		m_direction = Directions::Left;
+	}
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+	{
+		if (m_direction != Directions::Right)
+		{
+			m_location = ArrangeLocation(m_location);
+		}
+		m_direction = Directions::Right;
+	}
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+	{
+		if (m_direction != Directions::Up)
+		{
+			m_location = ArrangeLocation(m_location);
+		}
+		m_direction = Directions::Up;
+	}
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+	{
+		if (m_direction != Directions::Down)
+		{
+			m_location = ArrangeLocation(m_location);
+		}
+		m_direction = Directions::Down;
+	}
+	else
+		m_direction = Directions::Center;
+}

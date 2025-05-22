@@ -26,6 +26,7 @@ private:
 	std::vector<std::unique_ptr<MobileObject>> m_MobileVec;
 	sf::Clock m_clock;
 
+	//void mainLoop();
 	void moveObj();
 
 	void updateInfoFromFile();
