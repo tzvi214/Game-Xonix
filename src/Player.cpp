@@ -217,7 +217,7 @@ void Player::move(std::vector<std::vector<std::unique_ptr<Tile>>>& board, float 
 			                                m_location.y + (m_direction.y * deltaTime * m_speed));
 		int row = board.size();
 		int col = board.at(0).size();
-		if (nextLoc.x < 0 || (nextLoc.x / SIZE::TILE_SIZE) > row-1) return;
+		if (nextLoc.x < 0 || (nextLoc.x/ SIZE::TILE_SIZE) > row-1) return;
 		if (nextLoc.y < 0 || (nextLoc.y / SIZE::TILE_SIZE) > col-1) return;
 
 
