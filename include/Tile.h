@@ -10,6 +10,7 @@ public:
 	virtual ~Tile() = default;
 	virtual bool isSave() = 0;
 	virtual void draw(sf::RenderWindow&) =0;
+	virtual bool isExists() = 0;
 
 protected:
 

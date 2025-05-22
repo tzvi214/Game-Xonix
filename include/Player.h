@@ -64,4 +64,5 @@ private:
 	void chooseDirection();
 	int m_speed = 50;
 	bool m_inTrailMode = false;
+	bool m_needToDoRecursion = false;
 };

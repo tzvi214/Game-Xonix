@@ -216,15 +216,41 @@ void Player::move(std::vector<std::vector<std::unique_ptr<Tile>>>& board, float 
 		sf::Vector2f nextLoc = sf::Vector2f(m_location.x + (m_direction.x * deltaTime * m_speed),
 			                                m_location.y + (m_direction.y * deltaTime * m_speed));
 		
-		if (/*board[m_location.x / SIZE::TILE_SIZE][m_location.y / SIZE::TILE_SIZE]->isSave() &&*/
+		if (board[m_location.x / SIZE::TILE_SIZE][m_location.y / SIZE::TILE_SIZE]->isSave() &&
 			(!board[nextLoc.x / SIZE::TILE_SIZE][nextLoc.y / SIZE::TILE_SIZE]->isSave()))
 		{
-			//sf::Vector2f loc = ArrangeLocation(nextLoc);/*sf::Vector2f{ nextLoc.x / SIZE::TILE_SIZE, nextLoc.y / SIZE::TILE_SIZE }*/;
+			m_inTrailMode = true;
+			m_needToDoRecursion = false;
 
-			board[nextLoc.x / SIZE::TILE_SIZE][nextLoc.y / SIZE::TILE_SIZE] = std::move(std::make_unique<TrailTile>
-				(nextLoc, m_sfmlManager));
+			/*board[nextLoc.x / SIZE::TILE_SIZE][nextLoc.y / SIZE::TILE_SIZE] = std::move(std::make_unique<TrailTile>
+				(nextLoc, m_sfmlManager));*/
 
 
+		}
+		else if ((!board[m_location.x / SIZE::TILE_SIZE][m_location.y / SIZE::TILE_SIZE]->isSave()) &&
+			board[nextLoc.x / SIZE::TILE_SIZE][nextLoc.y / SIZE::TILE_SIZE]->isSave())
+		{
+			m_inTrailMode = false;
+			m_needToDoRecursion = true;
+		}
+		if (m_inTrailMode)
+		{
+			int newX = static_cast<int>(nextLoc.x);
+			int newY = static_cast<int>(nextLoc.y) ;
+			newX -= (newX% SIZE::TILE_SIZE);
+			newY -= (newY % SIZE::TILE_SIZE);
+
+			sf::Vector2f lestLoc = sf::Vector2f{ static_cast<float>(newX), static_cast<float>(newY) };
+			if (!board[lestLoc.x / SIZE::TILE_SIZE][lestLoc.y / SIZE::TILE_SIZE]->isSave())
+			{
+				board[lestLoc.x / SIZE::TILE_SIZE][lestLoc.y / SIZE::TILE_SIZE] = std::move(std::make_unique<TrailTile>
+					(lestLoc, m_sfmlManager));
+
+			}
+		}
+		else
+		{
+			m_needToDoRecursion = false;
 		}
 
 		m_sprite.move(m_location.x + (m_direction.x * deltaTime * m_speed), 
