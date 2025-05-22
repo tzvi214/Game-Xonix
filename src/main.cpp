@@ -72,7 +72,6 @@ int main()
                 }
             }
         }
-        board[3][3] = std::make_unique<FilledTile>(sTile, sf::Vector2f ( 3*18.f, 3*18.f));
         window.clear();
         for (int i = 0; i < row; i++)
 

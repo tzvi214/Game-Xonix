@@ -44,4 +44,16 @@ public:
 private:
 	sf::Vector2f m_lastLocation = { 0, 0 };
 };
-
+//
+//#pragma once
+//#include "MobileObject.h"
+//
+//class Player : public MobileObject
+//{
+//public:
+//	Player(sf::Vector2f location, SfmlManager& SfmlMan);
+//	virtual ~Player() = default;
+//	virtual void draw(sf::RenderWindow&) override;
+//	// virtual void move(std::vector<std::unique_ptr<Tile>>&, float) override;
+//	virtual void move(float) override;
+//};
