@@ -28,7 +28,7 @@ private:
 
 	//void mainLoop();
 	void moveObj();
-
+	void handleCollisionControler();
 	void updateInfoFromFile();
 	void initBoard();
 	void initWindow();

@@ -50,6 +50,8 @@ void GameController::moveObj()
 
 }
 
+
+
 void GameController::updateInfoFromFile()
 {
 	std::fstream file("def.txt");
@@ -94,6 +96,7 @@ void GameController::initBoard()
 
 	//m_MobileVec.resize(1 /*+ m_information.getnumEnemy()*/); // 1 for player + num enemy.
 	m_MobileVec.push_back(std::make_unique<Player>(sf::Vector2f(0 * SIZE::TILE_SIZE, 0 * SIZE::TILE_SIZE), m_sfmlManager));
+	m_MobileVec.push_back(std::make_unique<Enemy>(sf::Vector2f(5 * SIZE::TILE_SIZE, 2 * SIZE::TILE_SIZE), m_sfmlManager));
 
 }
 
@@ -123,4 +126,8 @@ void GameController::drawBoard()
 	}
 
 	m_window.display();
+}
+void GameController::handleCollisionControler()
+{
+
 }

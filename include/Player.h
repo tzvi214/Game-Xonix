@@ -48,8 +48,7 @@
 #pragma once
 #include "MobileObject.h"
 #include "SfmlManager.h"
-
-
+class Enemy;
 class Player : public MobileObject
 {
 public:
@@ -58,6 +57,12 @@ public:
 	virtual void draw(sf::RenderWindow&) override;
 	virtual void move(std::vector<std::vector<std::unique_ptr<Tile>>>&, float) override ;
 	virtual void move(float) override;
+
+	   // --- Double Dispatch ---
+	virtual void handleCollision(MobileObject&) override {};
+	virtual void handleCollision(Enemy&) override {};
+	virtual void handleCollision(Player&) override {};
+
 private:
 	SfmlManager& m_sfmlManager;
 	sf::Vector2f ArrangeLocation(sf::Vector2f);
@@ -65,4 +70,5 @@ private:
 	int m_speed = 50;
 	bool m_inTrailMode = false;
 	bool m_needToDoRecursion = false;
+	int m_life = 5;
 };

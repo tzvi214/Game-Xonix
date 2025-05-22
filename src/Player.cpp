@@ -215,17 +215,18 @@ void Player::move(std::vector<std::vector<std::unique_ptr<Tile>>>& board, float 
 	// i can check if i ainsid the board because of th vector !!
 		sf::Vector2f nextLoc = sf::Vector2f(m_location.x + (m_direction.x * deltaTime * m_speed),
 			                                m_location.y + (m_direction.y * deltaTime * m_speed));
+		int row = board.size();
+		int col = board.at(0).size();
+		if (nextLoc.x < 0 || (nextLoc.x / SIZE::TILE_SIZE) > row-1) return;
+		if (nextLoc.y < 0 || (nextLoc.y / SIZE::TILE_SIZE) > col-1) return;
+
+
 		
 		if (board[m_location.x / SIZE::TILE_SIZE][m_location.y / SIZE::TILE_SIZE]->isSave() &&
 			(!board[nextLoc.x / SIZE::TILE_SIZE][nextLoc.y / SIZE::TILE_SIZE]->isSave()))
 		{
 			m_inTrailMode = true;
 			m_needToDoRecursion = false;
-
-			/*board[nextLoc.x / SIZE::TILE_SIZE][nextLoc.y / SIZE::TILE_SIZE] = std::move(std::make_unique<TrailTile>
-				(nextLoc, m_sfmlManager));*/
-
-
 		}
 		else if ((!board[m_location.x / SIZE::TILE_SIZE][m_location.y / SIZE::TILE_SIZE]->isSave()) &&
 			board[nextLoc.x / SIZE::TILE_SIZE][nextLoc.y / SIZE::TILE_SIZE]->isSave())
