@@ -1,91 +1,116 @@
-#include <iostream>
-#include "Object.h"
-#include "Player.h"
-#include "vector"
-#include "memory"
-#include <SFML/Graphics.hpp>
-#include "GameInfromation.h"
+#include "GameController.h"
+
 int main()
 {
-    int row = 25, col = 25;
-
-    // אתחול נכון של הווקטור הדו-ממדי עם מצביעים ריקים
-    std::vector<std::vector<std::unique_ptr<Object>>> board;
-
-	board.resize(row);
-	for (int i = 0; i < row; i++)
-	{
-		board[i].resize(col);
-	}
-    sf::Texture t1;
-    t1.loadFromFile("tiles.png");
-    sf::Sprite sTile(t1);
-
-    for (int i = 0; i < row; i++)
-    {
-        for (int j = 0; j < col; j++)
-        {
-            sf::Vector2f pos(j * 18.f, i * 18.f);  
-            if (i == 0 || j == 0 || i == row - 1 || j == col - 1)
-            {
-                board[i][j] = std::make_unique<FilledTile>(sTile, pos);  // קצה - אזור בטוח
-            }
-            else
-            {
-                board[i][j] = std::make_unique<EmptyTile>(sTile, pos);  // שאר המקומות - שטח מסוכן
-            }
-        }
-    }
-	sf::RenderWindow window(sf::VideoMode(col * 18, row * 18), "Xonix Game!");
-	window.setFramerateLimit(60);
-	Player player{ sf::Vector2f(0, 0), sTile };
-	Enemy enemy{ sf::Vector2f(5 *18, 5*18), sTile };
-    sf::Clock clock;
-    clock.restart();
-    while (window.isOpen())
-		
-    {
-        sf::Event event;
-        while (window.pollEvent(event))
-        {
-            if (event.type == sf::Event::Closed)
-                window.close();
-        }
-		float deltaTime = clock.restart().asSeconds();
-
-		clock.restart();
-		enemy.move(board, deltaTime); // Move the enemy with a delta time of 0.1 seconds
-		player.move(board, deltaTime); // Move the player with a delta time of 0.1 seconds
-        if (player.needToDoRecursion())
-        {
-			int row = int(enemy.getLocation().x) / 18;
-			int col = int(enemy.getLocation().y) / 18;
-			enemy.conquer(board, row, col);
-           
-        }
-        for (int i = 1; i <= 24; i++) {
-            for (int j = 1; j <= 24; j++) {
-                if ((!board[i][j]->exists())) {
-                    sf::Vector2f pos(i * 18.f, j * 18.f);
-                    board[i][j] = std::make_unique<FilledTile>(sTile, pos);
-                   // board[i][j] = std::make_unique<EmptyTile>(sTile, pos);
-                }
-            }
-        }
-        window.clear();
-        for (int i = 0; i < row; i++)
-
-            for (int j = 0; j < col; j++)
-            {
-                board[i][j]->draw(window);
-            }
-        player.draw(window);
-		enemy.draw(window);
-
-		window.display();
-    }
-    return EXIT_SUCCESS;
+	GameController game;
+	game.run();
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//#include <iostream>
+//#include "Object.h"
+//#include "Player.h"
+//#include "vector"
+//#include "memory"
+//#include <SFML/Graphics.hpp>
+//#include "GameInfromation.h"
+//int main()
+//{
+//    int row = 25, col = 25;
+//
+//    // אתחול נכון של הווקטור הדו-ממדי עם מצביעים ריקים
+//    std::vector<std::vector<std::unique_ptr<Object>>> board;
+//
+//	board.resize(row);
+//	for (int i = 0; i < row; i++)
+//	{
+//		board[i].resize(col);
+//	}
+//    sf::Texture t1;
+//    t1.loadFromFile("tiles.png");
+//    sf::Sprite sTile(t1);
+//
+//    for (int i = 0; i < row; i++)
+//    {
+//        for (int j = 0; j < col; j++)
+//        {
+//            sf::Vector2f pos(j * 18.f, i * 18.f);  
+//            if (i == 0 || j == 0 || i == row - 1 || j == col - 1)
+//            {
+//                board[i][j] = std::make_unique<FilledTile>(sTile, pos);  // קצה - אזור בטוח
+//            }
+//            else
+//            {
+//                board[i][j] = std::make_unique<EmptyTile>(sTile, pos);  // שאר המקומות - שטח מסוכן
+//            }
+//        }
+//    }
+//	sf::RenderWindow window(sf::VideoMode(col * 18, row * 18), "Xonix Game!");
+//	window.setFramerateLimit(60);
+//	Player player{ sf::Vector2f(0, 0), sTile };
+//	Enemy enemy{ sf::Vector2f(5 *18, 5*18), sTile };
+//    sf::Clock clock;
+//    clock.restart();
+//    while (window.isOpen())
+//		
+//    {
+//        sf::Event event;
+//        while (window.pollEvent(event))
+//        {
+//            if (event.type == sf::Event::Closed)
+//                window.close();
+//        }
+//		float deltaTime = clock.restart().asSeconds();
+//
+//		clock.restart();
+//		enemy.move(board, deltaTime); // Move the enemy with a delta time of 0.1 seconds
+//		player.move(board, deltaTime); // Move the player with a delta time of 0.1 seconds
+//        if (player.needToDoRecursion())
+//        {
+//			int row = int(enemy.getLocation().x) / 18;
+//			int col = int(enemy.getLocation().y) / 18;
+//			enemy.conquer(board, row, col);
+//           
+//        }
+//        for (int i = 1; i <= 24; i++) {
+//            for (int j = 1; j <= 24; j++) {
+//                if ((!board[i][j]->exists())) {
+//                    sf::Vector2f pos(i * 18.f, j * 18.f);
+//                    board[i][j] = std::make_unique<FilledTile>(sTile, pos);
+//                   // board[i][j] = std::make_unique<EmptyTile>(sTile, pos);
+//                }
+//            }
+//        }
+//        window.clear();
+//        for (int i = 0; i < row; i++)
+//
+//            for (int j = 0; j < col; j++)
+//            {
+//                board[i][j]->draw(window);
+//            }
+//        player.draw(window);
+//		enemy.draw(window);
+//
+//		window.display();
+//    }
+//    return EXIT_SUCCESS;
+//}
 // stats
 // grid[M][N] == -1 -> enemy place
 // grid[M][N] == 0 -> riskPlace
