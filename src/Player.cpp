@@ -54,6 +54,7 @@ void Player::move(float deltaTime)
 
 void Player::move(std::vector<std::vector<std::unique_ptr<Tile>>>& board, float deltaTime)
 {
+	m_needToDoRecursion = false;// mayby to movit from hair
 	chooseDirection();
 		sf::Vector2f nextLoc = sf::Vector2f(m_location.x + (m_direction.x * deltaTime * m_speed),
 			                                m_location.y + (m_direction.y * deltaTime * m_speed));
@@ -117,8 +118,6 @@ void Player::chooseDirection()
 		m_direction = Directions::Center;
 }
 
-
-
 void Player::handleCollision(MobileObject& other)
 {
 	other.handleCollision(*this);
@@ -145,13 +144,7 @@ void Player::checkLocation(std::vector<std::vector<std::unique_ptr<Tile>>>& boar
 		m_inTrailMode = true;
 		m_needToDoRecursion = false;
 	}
-	else if ((!board[m_location.x / SIZE::TILE_SIZE][m_location.y / SIZE::TILE_SIZE]->isSave()) &&
-		board[nextLoc.x / SIZE::TILE_SIZE][nextLoc.y / SIZE::TILE_SIZE]->isSave())
-	{
-		m_inTrailMode = false;
-		m_needToDoRecursion = true;
-		cleanTrail(board);
-	}
+	
 	if (m_inTrailMode)
 	{
 		int newX = static_cast<int>(nextLoc.x);
@@ -165,6 +158,11 @@ void Player::checkLocation(std::vector<std::vector<std::unique_ptr<Tile>>>& boar
 			board[lestLoc.x / SIZE::TILE_SIZE][lestLoc.y / SIZE::TILE_SIZE] = std::move(std::make_unique<TrailTile>
 				(lestLoc, m_sfmlManager));
 
+		}
+		else {
+			m_inTrailMode = false;
+			m_needToDoRecursion = true;
+			cleanTrail(board);
 		}
 	}
 	
