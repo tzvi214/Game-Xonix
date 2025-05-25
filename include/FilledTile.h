@@ -9,4 +9,7 @@ public:
 	virtual ~FilledTile() = default;
 	virtual void draw(sf::RenderWindow&) override;
 	virtual bool isExists() override { return true; }
+	virtual bool shouldRecurseInto() override { return false; }
+	virtual bool iVisited() override { return true; }
+
 };

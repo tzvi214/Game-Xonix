@@ -50,9 +50,6 @@ void GameController::moveObj()
 	}
 
 }
-
-
-
 void GameController::updateInfoFromFile()
 {
 	std::fstream file("def.txt");

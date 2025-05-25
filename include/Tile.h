@@ -11,6 +11,9 @@ public:
 	virtual bool isSave() = 0;
 	virtual void draw(sf::RenderWindow&) =0;
 	virtual bool isExists() = 0;
+	virtual bool shouldRecurseInto() = 0;
+	virtual bool iVisited() = 0;
+	virtual void updateVisit() {};
 
 protected:
 

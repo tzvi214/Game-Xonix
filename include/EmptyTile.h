@@ -9,6 +9,9 @@ public:
 	virtual ~EmptyTile() = default;
 	virtual void draw(sf::RenderWindow&) override;
 	virtual bool isExists() override { return true; }
+	virtual bool shouldRecurseInto() override {  return true;  }
+	virtual void updateVisit() override { m_visited = true; };
+	virtual bool iVisited() override { return m_visited; }
+
 private:
-	
 };
