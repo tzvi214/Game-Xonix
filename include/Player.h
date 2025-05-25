@@ -72,7 +72,7 @@ private:
 	void checkLocation(std::vector<std::vector<std::unique_ptr<Tile>>>&, sf::Vector2f);
 	void cleanTrail(std::vector<std::vector<std::unique_ptr<Tile>>>&);
 
-	int m_speed = 50;
+	int m_speed = 150;
 	bool m_inTrailMode = false;
 	bool m_needToDoRecursion = false;
 	bool m_needToCleanTrail = false;
