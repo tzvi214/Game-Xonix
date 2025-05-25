@@ -14,9 +14,10 @@ public:
 	virtual void move(float) override {};
 
 	  // --- Double Dispatch ---
-	virtual void handleCollision(MobileObject&) override {};
+	virtual void handleCollision(MobileObject&) override ;
 	virtual void handleCollision(Enemy&) override {};
-	virtual void handleCollision(Player&) override {};
+	virtual void handleCollision(Player&) override ;
+	
 private:
 	bool m_killedPlayer = false;
 	int m_speed = 50;

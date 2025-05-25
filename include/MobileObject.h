@@ -14,9 +14,11 @@ public:
 	virtual void move(float) = 0;
 
 	// --- Double Dispatch ---
-	virtual void handleCollision(MobileObject&) {};
-	virtual void handleCollision(Enemy&) {};
-	virtual void handleCollision(Player&) {};
+	virtual void handleCollision(MobileObject&) =0;
+	virtual void handleCollision(Enemy&) =0;
+	virtual void handleCollision(Player&) =0;
+
+	virtual bool checkCollision(const sf::Sprite&);
 protected:
   sf::Vector2f m_direction{ -1.f,-1.f };
 };

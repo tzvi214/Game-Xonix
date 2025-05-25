@@ -1,4 +1,5 @@
 #include "Enemy.h"
+#include "Player.h"
 Enemy::Enemy(sf::Vector2f location, SfmlManager& SfmlMan) 
 	: MobileObject(location, sf::Sprite{SfmlMan.getTilesTex() /*SfmlMan.getEnemyTex()*/ })
 { }
@@ -63,9 +64,20 @@ void Enemy::move(std::vector<std::vector<std::unique_ptr<Tile>>>& board, float d
 }
 
 
+
 void Enemy::draw(sf::RenderWindow& window)
 {
 	m_sprite.setPosition(m_location);
 	m_sprite.setTextureRect(sf::IntRect(2 * SIZE::TILE_SIZE , 0, SIZE::TILE_SIZE, SIZE::TILE_SIZE));
 	window.draw(m_sprite);
+}
+
+void Enemy::handleCollision(MobileObject& other)
+{
+	other.handleCollision(*this);
+}
+
+void Enemy::handleCollision(Player& player)
+{
+	player.handleCollision(*this);
 }

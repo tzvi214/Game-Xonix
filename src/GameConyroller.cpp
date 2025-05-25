@@ -43,6 +43,7 @@ void GameController::moveObj()
 	{
 		m_MobileVec[i]->move(deltaTime);
 	}*/
+	handleCollisionControler();
 	for (int i = 0; i < m_MobileVec.size(); ++i)
 	{
 		m_MobileVec[i]->move(m_TileVec,deltaTime);
@@ -129,5 +130,12 @@ void GameController::drawBoard()
 }
 void GameController::handleCollisionControler()
 {
-
+	for(int i =0; i < m_MobileVec.size(); i++)
+		for (int j = 0; j < m_MobileVec.size(); j++)
+		{
+			if (i != j)
+			{
+				m_MobileVec[i]->handleCollision(*m_MobileVec[j]);
+			}
+		}
 }

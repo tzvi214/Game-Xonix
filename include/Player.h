@@ -59,16 +59,21 @@ public:
 	virtual void move(float) override;
 
 	   // --- Double Dispatch ---
-	virtual void handleCollision(MobileObject&) override {};
-	virtual void handleCollision(Enemy&) override {};
+	virtual void handleCollision(MobileObject&) override ;
+	virtual void handleCollision(Enemy&) override ;
 	virtual void handleCollision(Player&) override {};
 
 private:
+	const sf::Vector2f m_firstLocation;
 	SfmlManager& m_sfmlManager;
 	sf::Vector2f ArrangeLocation(sf::Vector2f);
 	void chooseDirection();
+	void checkLocation(std::vector<std::vector<std::unique_ptr<Tile>>>&, sf::Vector2f);
+	void cleanTrail(std::vector<std::vector<std::unique_ptr<Tile>>>&);
+
 	int m_speed = 50;
 	bool m_inTrailMode = false;
 	bool m_needToDoRecursion = false;
+	bool m_needToCleanTrail = false;
 	int m_life = 5;
 };
