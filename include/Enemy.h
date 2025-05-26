@@ -25,5 +25,5 @@ private:
 	SfmlManager& m_sfmlManager;
 	void cleanRec(std::vector<std::vector<std::unique_ptr<Tile>>>&);
 	void rec(std::vector<std::vector<std::unique_ptr<Tile>>>&, int, int);
-
+	void choiseLocation(std::vector<std::vector<std::unique_ptr<Tile>>>&, sf::Vector2f);
 };

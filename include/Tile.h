@@ -14,6 +14,7 @@ public:
 	virtual bool shouldRecurseInto() = 0;
 	virtual bool iVisited() = 0;
 	virtual void updateVisit() {};
+	virtual bool checkCollision(const sf::Sprite&);
 
 protected:
 

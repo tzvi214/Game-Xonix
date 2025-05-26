@@ -20,5 +20,5 @@ public:
 
 	virtual bool checkCollision(const sf::Sprite&);
 protected:
-  sf::Vector2f m_direction{ -1.f,-1.f };
+  sf::Vector2f m_direction{ 1.f,-1.f };
 };

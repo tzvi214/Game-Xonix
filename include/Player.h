@@ -71,7 +71,8 @@ private:
 	void chooseDirection();
 	void checkLocation(std::vector<std::vector<std::unique_ptr<Tile>>>&, sf::Vector2f);
 	void cleanTrail(std::vector<std::vector<std::unique_ptr<Tile>>>&);
-
+	void updateTrail(std::vector<std::vector<std::unique_ptr<Tile>>>&);
+	bool touchTrail(std::vector<std::vector<std::unique_ptr<Tile>>>&, sf::Vector2f);
 	int m_speed = 150;
 	bool m_inTrailMode = false;
 	bool m_needToDoRecursion = false;

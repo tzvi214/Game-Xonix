@@ -1,16 +1,17 @@
-
 #include "Player.h"
 #include "Utility.h"
 #include "memory"
 #include "TrailTile.h"
+#include "EmptyTile.h"
 #include <FilledTile.h>
 #include "Enemy.h"
+#include <iostream>
 
-
-Player::Player(sf::Vector2f location, SfmlManager& SfmlMan) 
+Player::Player(sf::Vector2f location, SfmlManager& SfmlMan)
 	: MobileObject(location, sf::Sprite{ SfmlMan.getTilesTex() }), m_sfmlManager{ SfmlMan }
 	, m_firstLocation{ location }
-{}
+{
+}
 
 void Player::draw(sf::RenderWindow& window)
 {
@@ -54,21 +55,24 @@ void Player::move(float deltaTime)
 
 void Player::move(std::vector<std::vector<std::unique_ptr<Tile>>>& board, float deltaTime)
 {
-	m_needToDoRecursion = false;// mayby to movit from hair
 	chooseDirection();
-		sf::Vector2f nextLoc = sf::Vector2f(m_location.x + (m_direction.x * deltaTime * m_speed),
-			                                m_location.y + (m_direction.y * deltaTime * m_speed));
-		int row = board.size();
-		int col = board.at(0).size();
-		if (nextLoc.x < 0 || (nextLoc.x / SIZE::TILE_SIZE) > row-1) return;
-		if (nextLoc.y < 0 || (nextLoc.y / SIZE::TILE_SIZE) > col-1) return;
+	sf::Vector2f nextLoc = sf::Vector2f(m_location.x + (m_direction.x * deltaTime * m_speed),
+		m_location.y + (m_direction.y * deltaTime * m_speed));
+	int row = board.size();
+	int col = board.at(0).size();
+	if (nextLoc.x < 0 || (nextLoc.x / SIZE::TILE_SIZE) > row - 1) return;
+	if (nextLoc.y < 0 || (nextLoc.y / SIZE::TILE_SIZE) > col - 1) return;
 
-		checkLocation(board, nextLoc);
-		
-		
-		m_sprite.move(m_location.x + (m_direction.x * deltaTime * m_speed), 
-			          m_location.y + (m_direction.y * deltaTime * m_speed));
-		m_location = nextLoc;
+	checkLocation(board, nextLoc);
+
+	/*if (touchTrail(board, nextLoc))
+	{
+		updateTrail(board);
+	}*/
+
+	m_sprite.move(m_location.x + (m_direction.x * deltaTime * m_speed),
+		m_location.y + (m_direction.y * deltaTime * m_speed));
+	m_location = nextLoc;
 }
 //-------------------------------------
 sf::Vector2f Player::ArrangeLocation(sf::Vector2f loc)
@@ -124,49 +128,52 @@ void Player::handleCollision(MobileObject& other)
 }
 
 void Player::handleCollision(Enemy& enemy)
-{ 
+{
 	if (enemy.checkCollision(m_sprite)) {
 		m_life--;
-		m_needToDoRecursion = false;
+		//m_needToDoRecursion = false;
 		m_location = m_firstLocation;
 		m_needToCleanTrail = true;
-		
+
 	}
 }
 
 void Player::checkLocation(std::vector<std::vector<std::unique_ptr<Tile>>>& board, sf::Vector2f nextLoc)
 {
 	if (m_needToCleanTrail) cleanTrail(board);
+	m_needToDoRecursion = false;
 
 	if (board[m_location.x / SIZE::TILE_SIZE][m_location.y / SIZE::TILE_SIZE]->isSave() &&
 		(!board[nextLoc.x / SIZE::TILE_SIZE][nextLoc.y / SIZE::TILE_SIZE]->isSave()))
 	{
-		m_inTrailMode = true;
-		m_needToDoRecursion = false;
+		m_inTrailMode = true;// if i went from savty place to nat savty place
+		//std::cout << "\nnew i am chinging to trail mode\n";
 	}
-	
 	if (m_inTrailMode)
 	{
-		int newX = static_cast<int>(nextLoc.x);
-		int newY = static_cast<int>(nextLoc.y);
-		newX -= (newX % SIZE::TILE_SIZE);
-		newY -= (newY % SIZE::TILE_SIZE);
-
-		sf::Vector2f lestLoc = sf::Vector2f{ static_cast<float>(newX), static_cast<float>(newY) };
-		if (!board[lestLoc.x / SIZE::TILE_SIZE][lestLoc.y / SIZE::TILE_SIZE]->isSave())
-		{
-			board[lestLoc.x / SIZE::TILE_SIZE][lestLoc.y / SIZE::TILE_SIZE] = std::move(std::make_unique<TrailTile>
-				(lestLoc, m_sfmlManager));
+		if(!board[nextLoc.x / SIZE::TILE_SIZE][nextLoc.y / SIZE::TILE_SIZE]->isSave())// i am still nat in savty place
+		{ 
+			int newTileX = static_cast<int>(nextLoc.x);
+			int newTileY = static_cast<int>(nextLoc.y);
+				
+			newTileX -= (newTileX % SIZE::TILE_SIZE);
+			newTileY -= (newTileY % SIZE::TILE_SIZE);
+			sf::Vector2f newTileLoc = sf::Vector2f{ static_cast<float>(newTileX), static_cast<float>(newTileY) };
+			board[nextLoc.x / SIZE::TILE_SIZE][nextLoc.y / SIZE::TILE_SIZE] = std::move(std::make_unique<TrailTile>
+				(newTileLoc, m_sfmlManager));
+		//std::cout << "\nnew i am nat in savty place i am chinging it to trail\n";
 
 		}
-		else {
+		else /*if (board[nextLoc.x / SIZE::TILE_SIZE][nextLoc.y / SIZE::TILE_SIZE]->isSave() &&
+			(!board[m_location.x / SIZE::TILE_SIZE][m_location.y / SIZE::TILE_SIZE]->isSave()))*/ // i am back to savty place
+		{
 			m_inTrailMode = false;
 			m_needToDoRecursion = true;
 			cleanTrail(board);
+			//std::cout << "\nnew i am save agin i am doing rec and cleaning the trail\n";
+
 		}
 	}
-	
-
 
 }
 //------------------------------------------------------------------------
@@ -175,12 +182,48 @@ void Player::cleanTrail(std::vector<std::vector<std::unique_ptr<Tile>>>& board)
 	//if (!m_needToCleanTrail) return;//double check
 	int row = board.size();
 	int col = board.at(0).size();
-	for(int i = 0; i < row; i++)
+	for (int i = 0; i < row; i++)
 		for (int j = 0; j < col; j++)
 		{
 			if ((!board[i][j]->isExists()))
 				board[i][j] = std::move(std::make_unique<FilledTile>(sf::Vector2f
-				{ static_cast<float>(i * SIZE::TILE_SIZE),  static_cast<float>(j * SIZE::TILE_SIZE) }, m_sfmlManager));
+					{ static_cast<float>(i * SIZE::TILE_SIZE),  static_cast<float>(j * SIZE::TILE_SIZE) }, m_sfmlManager));
 		}
 	m_needToCleanTrail = false;
+}
+
+void Player::updateTrail(std::vector<std::vector<std::unique_ptr<Tile>>>& board)
+{
+	int row = board.size();
+	int col = board.at(0).size();
+	for (int i = 0; i < row; i++)
+		for (int j = 0; j < col; j++)
+		{
+			if ((!board[i][j]->isExists()))
+				board[i][j] = std::move(std::make_unique<EmptyTile>(sf::Vector2f
+					{ static_cast<float>(i * SIZE::TILE_SIZE),  static_cast<float>(j * SIZE::TILE_SIZE) }, m_sfmlManager));
+		}
+}
+
+bool Player::touchTrail(std::vector<std::vector<std::unique_ptr<Tile>>>& board, sf::Vector2f newLocation)
+{ 
+	return false;
+//	static int x = 0;
+////	if (!m_inTrailMode) return false;
+//
+//	if ((int)m_location.x / SIZE::TILE_SIZE != (int)newLocation.x / SIZE::TILE_SIZE ||
+//		(int)m_location.y / SIZE::TILE_SIZE != (int)newLocation.y / SIZE::TILE_SIZE)
+//	{
+//		std::cout << "\n difrant location   " << x++ << std::endl;
+//		if (2 < 1 &&
+//			(!board[newLocation.x / SIZE::TILE_SIZE][newLocation.y / SIZE::TILE_SIZE]->isExists()))
+//		{
+//			//return true;
+//		}
+//	}
+//		//if(!board[newLocation.x / SIZE::TILE_SIZE][newLocation.y / SIZE::TILE_SIZE]->isExists())//
+//	//	(!board[m_location.x / SIZE::TILE_SIZE][m_location.y / SIZE::TILE_SIZE]->isSave()))
+//	
+//
+		
 }
