@@ -65,10 +65,11 @@ void Player::move(std::vector<std::vector<std::unique_ptr<Tile>>>& board, float 
 
 	checkLocation(board, nextLoc);
 
-	/*if (touchTrail(board, nextLoc))
+	if (touchTrail(board, nextLoc) || m_touchTrail)
 	{
 		updateTrail(board);
-	}*/
+		return;
+	}
 
 	m_sprite.move(m_location.x + (m_direction.x * deltaTime * m_speed),
 		m_location.y + (m_direction.y * deltaTime * m_speed));
@@ -118,7 +119,7 @@ void Player::chooseDirection()
 		}
 		m_direction = Directions::Down;
 	}
-	else
+	else if(!m_inTrailMode)// dont stop in trail
 		m_direction = Directions::Center;
 }
 
@@ -129,25 +130,28 @@ void Player::handleCollision(MobileObject& other)
 
 void Player::handleCollision(Enemy& enemy)
 {
+
 	if (enemy.checkCollision(m_sprite)) {
 		m_life--;
-		//m_needToDoRecursion = false;
+		m_needToDoRecursion = false;
 		m_location = m_firstLocation;
-		m_needToCleanTrail = true;
+		m_needToCleanTrail = false;
+		m_touchTrail = true;
 
 	}
 }
 
 void Player::checkLocation(std::vector<std::vector<std::unique_ptr<Tile>>>& board, sf::Vector2f nextLoc)
 {
+	if (m_touchTrail) updateTrail(board);
 	if (m_needToCleanTrail) cleanTrail(board);
 	m_needToDoRecursion = false;
 
 	if (board[m_location.x / SIZE::TILE_SIZE][m_location.y / SIZE::TILE_SIZE]->isSave() &&
 		(!board[nextLoc.x / SIZE::TILE_SIZE][nextLoc.y / SIZE::TILE_SIZE]->isSave()))
 	{
-		m_inTrailMode = true;// if i went from savty place to nat savty place
-		//std::cout << "\nnew i am chinging to trail mode\n";
+		m_inTrailMode = true;// if i went from safety place to not savty place
+		
 	}
 	if (m_inTrailMode)
 	{
@@ -164,16 +168,17 @@ void Player::checkLocation(std::vector<std::vector<std::unique_ptr<Tile>>>& boar
 		//std::cout << "\nnew i am nat in savty place i am chinging it to trail\n";
 
 		}
-		else /*if (board[nextLoc.x / SIZE::TILE_SIZE][nextLoc.y / SIZE::TILE_SIZE]->isSave() &&
-			(!board[m_location.x / SIZE::TILE_SIZE][m_location.y / SIZE::TILE_SIZE]->isSave()))*/ // i am back to savty place
+		else 
 		{
 			m_inTrailMode = false;
 			m_needToDoRecursion = true;
-			cleanTrail(board);
+			m_needToCleanTrail = true;
+			//cleanTrail(board);
 			//std::cout << "\nnew i am save agin i am doing rec and cleaning the trail\n";
 
 		}
 	}
+	
 
 }
 //------------------------------------------------------------------------
@@ -203,11 +208,23 @@ void Player::updateTrail(std::vector<std::vector<std::unique_ptr<Tile>>>& board)
 				board[i][j] = std::move(std::make_unique<EmptyTile>(sf::Vector2f
 					{ static_cast<float>(i * SIZE::TILE_SIZE),  static_cast<float>(j * SIZE::TILE_SIZE) }, m_sfmlManager));
 		}
+	
+	m_touchTrail = false;
+	m_inTrailMode = false;
+	m_needToDoRecursion = false;
+	m_life--;
+	m_location = m_firstLocation;
 }
 
 bool Player::touchTrail(std::vector<std::vector<std::unique_ptr<Tile>>>& board, sf::Vector2f newLocation)
 { 
+
+	if (!m_inTrailMode) return false;
+	
+	if (!board[(newLocation.x / SIZE::TILE_SIZE) + m_direction.x][(newLocation.y / SIZE::TILE_SIZE) + m_direction.y]->isExists())
+		return true;
 	return false;
+
 //	static int x = 0;
 ////	if (!m_inTrailMode) return false;
 //
@@ -225,5 +242,4 @@ bool Player::touchTrail(std::vector<std::vector<std::unique_ptr<Tile>>>& board, 
 //	//	(!board[m_location.x / SIZE::TILE_SIZE][m_location.y / SIZE::TILE_SIZE]->isSave()))
 //	
 //
-		
 }

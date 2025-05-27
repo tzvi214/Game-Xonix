@@ -63,7 +63,7 @@ public:
 	virtual void handleCollision(MobileObject&) override ;
 	virtual void handleCollision(Enemy&) override ;
 	virtual void handleCollision(Player&) override {};
-
+	void cleanTrail()  { m_touchTrail = true; }
 private:
 	const sf::Vector2f m_firstLocation;
 	SfmlManager& m_sfmlManager;
@@ -73,7 +73,8 @@ private:
 	void cleanTrail(std::vector<std::vector<std::unique_ptr<Tile>>>&);
 	void updateTrail(std::vector<std::vector<std::unique_ptr<Tile>>>&);
 	bool touchTrail(std::vector<std::vector<std::unique_ptr<Tile>>>&, sf::Vector2f);
-	int m_speed = 150;
+	bool m_touchTrail = false;
+	int m_speed = 100;
 	bool m_inTrailMode = false;
 	bool m_needToDoRecursion = false;
 	bool m_needToCleanTrail = false;

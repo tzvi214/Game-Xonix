@@ -19,6 +19,7 @@ void Enemy::move(std::vector<std::vector<std::unique_ptr<Tile>>>& board, float d
 	sf::Vector2f nextLocation = sf::Vector2f(m_location.x + (m_direction.x * deltaTime * m_speed),
 			m_location.y + (m_direction.y * deltaTime * m_speed));
 	/*if ((!board[nextLocation.x / SIZE::TILE_SIZE][nextLocation.y / SIZE::TILE_SIZE]->isSave()))*/
+
 		m_location = nextLocation;
 	//if() if enemy toch the trail player liife --
 	if (m_needRec) { // new i am doing the recursion if i need to 
@@ -26,6 +27,9 @@ void Enemy::move(std::vector<std::vector<std::unique_ptr<Tile>>>& board, float d
 		cleanRec(board);
 		m_needRec = false;
 	}
+	
+	if (!board[(m_location.x / SIZE::TILE_SIZE) + m_direction.x][(m_location.y / SIZE::TILE_SIZE) + m_direction.y]->isExists())
+		m_touchTril = true;
 }
 
 
@@ -47,6 +51,11 @@ void Enemy::handleCollision(Player& player)
 	player.handleCollision(*this);
 	if (player.needToDoRecursion())
 		m_needRec = true;
+	if (m_touchTril) {
+		player.cleanTrail();
+		m_touchTril = false;
+	}
+	player.handleCollision(*this);
 }
 
 void Enemy::rec(std::vector<std::vector<std::unique_ptr<Tile>>>& board, int i , int j)
