@@ -73,8 +73,9 @@ private:
 	void cleanTrail(std::vector<std::vector<std::unique_ptr<Tile>>>&);
 	void updateTrail(std::vector<std::vector<std::unique_ptr<Tile>>>&);
 	bool touchTrail(std::vector<std::vector<std::unique_ptr<Tile>>>&, sf::Vector2f);
+	void setDirection(sf::Vector2f);
 	bool m_touchTrail = false;
-	int m_speed = 100;
+	int m_speed = 200;
 	bool m_inTrailMode = false;
 	bool m_needToDoRecursion = false;
 	bool m_needToCleanTrail = false;

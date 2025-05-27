@@ -36,5 +36,7 @@ namespace Diagonals
 	const sf::Vector2f Center{ 0.0f, 0.0f };
 
 }
-
+namespace Data {
+	const int throwable = 5;
+}
 //sf::Vector2f ArrangeLocation(const sf::Vector2f& position);

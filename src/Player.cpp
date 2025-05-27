@@ -60,16 +60,23 @@ void Player::move(std::vector<std::vector<std::unique_ptr<Tile>>>& board, float 
 		m_location.y + (m_direction.y * deltaTime * m_speed));
 	int row = board.size();
 	int col = board.at(0).size();
-	if (nextLoc.x < 0 || (nextLoc.x / SIZE::TILE_SIZE) > row - 1) return;
-	if (nextLoc.y < 0 || (nextLoc.y / SIZE::TILE_SIZE) > col - 1) return;
+	if (nextLoc.x < 0 || (nextLoc.x / SIZE::TILE_SIZE) > row -1)
+	{	
+		if (((nextLoc.x / SIZE::TILE_SIZE) >= row - 1 && sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) || nextLoc.x < 0)
+			return;
+	}
 
-	checkLocation(board, nextLoc);
-
+	if (nextLoc.y < 0 || (nextLoc.y / SIZE::TILE_SIZE) > col -1 )
+	{
+		if (((nextLoc.y / SIZE::TILE_SIZE) >= col - 1 && sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) || nextLoc.y < 0)
+		   return;
+	}
 	if (touchTrail(board, nextLoc) || m_touchTrail)
 	{
 		updateTrail(board);
 		return;
 	}
+	checkLocation(board, nextLoc);
 
 	m_sprite.move(m_location.x + (m_direction.x * deltaTime * m_speed),
 		m_location.y + (m_direction.y * deltaTime * m_speed));
@@ -89,38 +96,24 @@ void Player::chooseDirection()
 {
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 	{
-		if (m_direction != Directions::Left)
-		{
-			m_location = ArrangeLocation(m_location);
-		}
-		m_direction = Directions::Left;
+		setDirection(Directions::Left);
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
 	{
-		if (m_direction != Directions::Right)
-		{
-			m_location = ArrangeLocation(m_location);
-		}
-		m_direction = Directions::Right;
+		setDirection(Directions::Right);
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
 	{
-		if (m_direction != Directions::Up)
-		{
-			m_location = ArrangeLocation(m_location);
-		}
-		m_direction = Directions::Up;
+		setDirection(Directions::Up);
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
 	{
-		if (m_direction != Directions::Down)
-		{
-			m_location = ArrangeLocation(m_location);
-		}
-		m_direction = Directions::Down;
+		setDirection(Directions::Down);
 	}
-	else if(!m_inTrailMode)// dont stop in trail
-		m_direction = Directions::Center;
+	else if (!m_inTrailMode)// dont stop in trail
+	{
+		setDirection(Directions::Center);
+	}
 }
 
 void Player::handleCollision(MobileObject& other)
@@ -153,6 +146,7 @@ void Player::checkLocation(std::vector<std::vector<std::unique_ptr<Tile>>>& boar
 		m_inTrailMode = true;// if i went from safety place to not savty place
 		
 	}
+
 	if (m_inTrailMode)
 	{
 		if(!board[nextLoc.x / SIZE::TILE_SIZE][nextLoc.y / SIZE::TILE_SIZE]->isSave())// i am still nat in savty place
@@ -179,7 +173,6 @@ void Player::checkLocation(std::vector<std::vector<std::unique_ptr<Tile>>>& boar
 		}
 	}
 	
-
 }
 //------------------------------------------------------------------------
 void Player::cleanTrail(std::vector<std::vector<std::unique_ptr<Tile>>>& board)
@@ -218,28 +211,43 @@ void Player::updateTrail(std::vector<std::vector<std::unique_ptr<Tile>>>& board)
 
 bool Player::touchTrail(std::vector<std::vector<std::unique_ptr<Tile>>>& board, sf::Vector2f newLocation)
 { 
-
 	if (!m_inTrailMode) return false;
-	
-	if (!board[(newLocation.x / SIZE::TILE_SIZE) + m_direction.x][(newLocation.y / SIZE::TILE_SIZE) + m_direction.y]->isExists())
-		return true;
+
+		if (!board[(m_location.x / (SIZE::TILE_SIZE)) + m_direction.x][(m_location.y / (SIZE::TILE_SIZE)) + m_direction.y]->isExists())
+			return true;
+
 	return false;
 
-//	static int x = 0;
-////	if (!m_inTrailMode) return false;
-//
-//	if ((int)m_location.x / SIZE::TILE_SIZE != (int)newLocation.x / SIZE::TILE_SIZE ||
-//		(int)m_location.y / SIZE::TILE_SIZE != (int)newLocation.y / SIZE::TILE_SIZE)
-//	{
-//		std::cout << "\n difrant location   " << x++ << std::endl;
-//		if (2 < 1 &&
-//			(!board[newLocation.x / SIZE::TILE_SIZE][newLocation.y / SIZE::TILE_SIZE]->isExists()))
-//		{
-//			//return true;
-//		}
-//	}
-//		//if(!board[newLocation.x / SIZE::TILE_SIZE][newLocation.y / SIZE::TILE_SIZE]->isExists())//
-//	//	(!board[m_location.x / SIZE::TILE_SIZE][m_location.y / SIZE::TILE_SIZE]->isSave()))
-//	
-//
+}
+
+void Player::setDirection(sf::Vector2f newDirection)
+{
+	if (m_direction.x == newDirection.x && m_direction.y == newDirection.y)
+	{
+		return;
+	}
+	else   // direction changed but didnt stopt
+	{
+		//to move to the place nicely
+		// its nat will look like jumping  
+		if (newDirection.x || newDirection.y) // didnt stoppt
+		{
+			if (m_direction.x + newDirection.x == 0 || m_direction.y + newDirection.y == 0)// Reverse direction change immediately
+			{
+				m_direction = newDirection;
+				return;
+			}
+		}
+
+		if ((static_cast<int>(m_location.x) % SIZE::TILE_SIZE) > Data::throwable ||
+			(static_cast<int>(m_location.y) % SIZE::TILE_SIZE) > Data::throwable)
+		{
+			return;
+		}
+
+		m_location = ArrangeLocation(m_location);
+		m_direction = newDirection;
+		std::cout << "jumping \n";
+	}
+
 }
