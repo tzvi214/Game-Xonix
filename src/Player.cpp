@@ -247,7 +247,7 @@ void Player::setDirection(sf::Vector2f newDirection)
 
 		m_location = ArrangeLocation(m_location);
 		m_direction = newDirection;
-		std::cout << "jumping \n";
+		//std::cout << "jumping \n";
 	}
 
 }
