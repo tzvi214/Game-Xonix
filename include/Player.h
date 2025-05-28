@@ -17,7 +17,7 @@ public:
 	virtual void handleCollision(MobileObject&) override ;
 	virtual void handleCollision(Enemy&) override ;
 	virtual void handleCollision(Player&) override {};
-	void cleanTrail()  { m_touchTrail = true; }
+	void cleanTrail() { m_touchTrail = true; m_playerDisqualified = true; }
 private:
 	const sf::Vector2f m_firstLocation;
 	SfmlManager& m_sfmlManager;

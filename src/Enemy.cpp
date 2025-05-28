@@ -48,7 +48,6 @@ void Enemy::handleCollision(MobileObject& other)
 
 void Enemy::handleCollision(Player& player)
 {
-	player.handleCollision(*this);
 	if (player.needToDoRecursion())
 		m_needRec = true;
 	if (m_touchTril) {

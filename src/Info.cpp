@@ -12,7 +12,8 @@ void Information::draw(sf::RenderWindow& window)
 	text.setFillColor(sf::Color::White);
 	text.setString("Life: " + std::to_string(m_life) +
 		"    Close Percent: " + std::to_string(m_closePrecent)
-		+ "    Level: " + std::to_string(m_level));
+		+ "    Level: " + std::to_string(m_level)
+		+ "\n               The gool is: " + std::to_string(m_gool) +" Percent");
 
 	// set position of the text 
 	auto windowSize = window.getSize();

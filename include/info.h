@@ -27,5 +27,6 @@ private:
 	int m_numEnemy;
 	int m_closePrecent;
 	int m_level = 0;
+	int m_gool = 50;
 	SfmlManager& m_SfmlManager;
 };

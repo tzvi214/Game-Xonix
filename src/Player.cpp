@@ -13,8 +13,6 @@ Player::Player(sf::Vector2f location, SfmlManager& SfmlMan)
 {
 }
 
-
-
 void Player::draw(sf::RenderWindow& window)
 {
 	m_sprite.setPosition(m_location);
@@ -22,11 +20,8 @@ void Player::draw(sf::RenderWindow& window)
 	window.draw(m_sprite);
 }
 
-
 void Player::move(float deltaTime)
 {
-	// Handle player movement here
-	// Example: m_location += speed * deltaTime;
 
 	sf::Vector2f direction{ 0,0 };
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
@@ -52,8 +47,6 @@ void Player::move(float deltaTime)
 
 
 }
-
-
 
 void Player::move(std::vector<std::vector<std::unique_ptr<Tile>>>& board, float deltaTime)
 {
@@ -126,7 +119,8 @@ void Player::handleCollision(MobileObject& other)
 void Player::handleCollision(Enemy& enemy)
 {
 
-	if (enemy.checkCollision(m_sprite)) {
+	if (enemy.checkCollision(m_sprite)) 
+	{
 		m_playerDisqualified = true;
 		m_needToDoRecursion = false;
 		m_location = m_firstLocation;
@@ -145,7 +139,7 @@ void Player::checkLocation(std::vector<std::vector<std::unique_ptr<Tile>>>& boar
 	if (board[m_location.x / SIZE::TILE_SIZE][m_location.y / SIZE::TILE_SIZE]->isSave() &&
 		(!board[nextLoc.x / SIZE::TILE_SIZE][nextLoc.y / SIZE::TILE_SIZE]->isSave()))
 	{
-		m_inTrailMode = true;// if i went from safety place to not savty place
+		m_inTrailMode = true;// if i went from safety place to not safety place
 		
 	}
 
@@ -161,8 +155,6 @@ void Player::checkLocation(std::vector<std::vector<std::unique_ptr<Tile>>>& boar
 			sf::Vector2f newTileLoc = sf::Vector2f{ static_cast<float>(newTileX), static_cast<float>(newTileY) };
 			board[nextLoc.x / SIZE::TILE_SIZE][nextLoc.y / SIZE::TILE_SIZE] = std::move(std::make_unique<TrailTile>
 				(newTileLoc, m_sfmlManager));
-		//std::cout << "\nnew i am nat in savty place i am chinging it to trail\n";
-
 		}
 		else 
 		{
@@ -207,7 +199,6 @@ void Player::updateTrail(std::vector<std::vector<std::unique_ptr<Tile>>>& board)
 	m_touchTrail = false;
 	m_inTrailMode = false;
 	m_needToDoRecursion = false;
-	m_playerDisqualified = true;
 	m_location = m_firstLocation;
 }
 
@@ -215,8 +206,11 @@ bool Player::touchTrail(std::vector<std::vector<std::unique_ptr<Tile>>>& board, 
 { 
 	if (!m_inTrailMode) return false;
 
-		if (!board[(m_location.x / (SIZE::TILE_SIZE)) + m_direction.x][(m_location.y / (SIZE::TILE_SIZE)) + m_direction.y]->isExists())
-			return true;
+	if (!board[(m_location.x / (SIZE::TILE_SIZE)) + m_direction.x][(m_location.y / (SIZE::TILE_SIZE)) + m_direction.y]->isExists())
+	{
+		m_playerDisqualified = true;
+		return true;
+	}
 
 	return false;
 

@@ -9,6 +9,8 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <thread>
+#include <chrono>
 
 GameController::GameController() : m_information(m_sfmlManager)
 {
@@ -25,17 +27,18 @@ GameController::GameController() : m_information(m_sfmlManager)
 		std::cerr << "Unknown error occurred while reading the file." << std::endl;
 
 	}
+	
 	initBoard();
 	initWindow();
-
 }
 
 void GameController::run()
 {
-	m_clock.restart();// for the first time
 	while (readLevels()) // read the levels from the file
 	{
-		while (m_window.isOpen()) // Main game loop
+		m_clock.restart();
+
+		while (m_window.isOpen()) //  game Main loop
 		{
 			sf::Event event;
 			while (m_window.pollEvent(event))
@@ -45,6 +48,7 @@ void GameController::run()
 			}
 			moveObj();
 			drawBoard();
+			
 			if (m_information.robotDied())
 			{
 				drawGameOver();
@@ -52,8 +56,11 @@ void GameController::run()
 			}
 			else if (finishedThisLevel())
 			{
-				//updat leval
-				std::cout << "/n you finished The leval\n";
+				std::cout << "\n you finished The level\n";
+				m_window.close();
+
+				initBoard();
+				initWindow();
 				break;
 			}
 		}
@@ -65,11 +72,12 @@ void GameController::moveObj()
 {
 	float deltaTime = m_clock.restart().asSeconds();
 
-	handleCollisionControler();
 	for (int i = 0; i < m_MobileVec.size(); ++i)
 	{
 		m_MobileVec[i]->move(m_TileVec, deltaTime);
 	}
+	handleCollisionControler();
+
 }
 
 void GameController::handleCollisionControler()
@@ -84,7 +92,9 @@ void GameController::handleCollisionControler()
 		}
 
 	for (int i = 0; i < m_MobileVec.size(); i++)
+	{
 		m_MobileVec[i]->updateInformation(m_information);
+	}
 }
 
 void GameController::updateInfoFromFile()
@@ -116,9 +126,10 @@ void GameController::updateInfoFromFile()
 void GameController::initBoard()
 {
 	// I want to line the board with empty tiles and the frame with solid tiles.
+	
 	int col = m_information.getTilesPerCol();
 	int row = m_information.getTilesPerRow();
-
+	m_TileVec.clear();
 	//m_MobileVec.resize(1 + m_information.getnumEnemy()); // 1 for player + num enemy.
 	// i changhed the resize of row and col
 	m_TileVec.resize(row);
@@ -140,7 +151,7 @@ void GameController::initBoard()
 	}
 
 
-
+	m_MobileVec.clear();
 	m_MobileVec.push_back(std::make_unique<Player>(sf::Vector2f(0 * SIZE::TILE_SIZE, 0 * SIZE::TILE_SIZE), m_sfmlManager));
 	m_MobileVec.push_back(std::make_unique<Enemy>(sf::Vector2f(5 * SIZE::TILE_SIZE, 2 * SIZE::TILE_SIZE), m_sfmlManager));
 
@@ -156,6 +167,7 @@ void GameController::initWindow()
 
 void GameController::drawBoard()
 {
+
 	m_window.clear();
 
 	for (int i = 0; i < m_information.getTilesPerCol(); ++i)
@@ -214,11 +226,12 @@ bool GameController::finishedThisLevel()
 
 	m_information.setClosePrecent((occupied / boardSize)*100);
 	return occupied >= (boardSize * percent);
-	m_clock.restart();
 }
 
 void GameController::drawGameOver()
 {
-
-
+	sf::Sprite gameOver(m_sfmlManager.getGameOverTex());
+	m_window.draw(gameOver);
+	m_window.display();
+	std::this_thread::sleep_for(std::chrono::seconds(2));
 }

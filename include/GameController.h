@@ -35,6 +35,6 @@ private:
 	void initWindow();
 	void drawBoard();
 	bool readLevels();
-	bool finishedThisLevel();// i need to do this
-	void drawGameOver();// i need to do this
+	bool finishedThisLevel();
+	void drawGameOver();
 };
