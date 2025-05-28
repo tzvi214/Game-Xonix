@@ -2,6 +2,7 @@
 #include <vector>
 #include <SFML/Graphics.hpp>
 #include <memory>
+#include <fstream>
 
 #include "Tile.h"
 #include "SfmlManager.h"
@@ -18,6 +19,7 @@ private:
 	SfmlManager m_sfmlManager;
 	Information m_information;
 	sf::RenderWindow m_window;
+	std::fstream m_fileLevels;
 
 	using TileVec = std::vector<std::unique_ptr<Tile>>;
 	using MobileVec = std::vector<std::unique_ptr<MobileObject>>;
@@ -26,11 +28,13 @@ private:
 	std::vector<std::unique_ptr<MobileObject>> m_MobileVec;
 	sf::Clock m_clock;
 
-	//void mainLoop();
 	void moveObj();
 	void handleCollisionControler();
 	void updateInfoFromFile();
 	void initBoard();
 	void initWindow();
 	void drawBoard();
+	bool readLevels();
+	bool finishedThisLevel();// i need to do this
+	void drawGameOver();// i need to do this
 };

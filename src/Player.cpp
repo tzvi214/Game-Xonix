@@ -13,6 +13,8 @@ Player::Player(sf::Vector2f location, SfmlManager& SfmlMan)
 {
 }
 
+
+
 void Player::draw(sf::RenderWindow& window)
 {
 	m_sprite.setPosition(m_location);
@@ -125,7 +127,7 @@ void Player::handleCollision(Enemy& enemy)
 {
 
 	if (enemy.checkCollision(m_sprite)) {
-		m_life--;
+		m_playerDisqualified = true;
 		m_needToDoRecursion = false;
 		m_location = m_firstLocation;
 		m_needToCleanTrail = false;
@@ -205,7 +207,7 @@ void Player::updateTrail(std::vector<std::vector<std::unique_ptr<Tile>>>& board)
 	m_touchTrail = false;
 	m_inTrailMode = false;
 	m_needToDoRecursion = false;
-	m_life--;
+	m_playerDisqualified = true;
 	m_location = m_firstLocation;
 }
 
@@ -250,4 +252,13 @@ void Player::setDirection(sf::Vector2f newDirection)
 		//std::cout << "jumping \n";
 	}
 
+}
+//-----------------------------------------------
+void Player::updateInformation(Information& info)
+{
+	if (m_playerDisqualified)
+	{
+		info.playerDisqualified();
+		m_playerDisqualified = false;
+	}
 }

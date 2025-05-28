@@ -1,6 +1,7 @@
 #pragma once
 #include "Object.h"
 #include "Tile.h"
+#include "Info.h"
 
 class Enemy;
 class Player;
@@ -10,6 +11,7 @@ class MobileObject : public Object
 public:
 	MobileObject(sf::Vector2f location, sf::Sprite sprite);
 	virtual ~MobileObject() = default;
+	virtual void updateInformation(Information&) {};
 	virtual void move(std::vector<std::vector<std::unique_ptr<Tile>>>&, float) = 0;
 	virtual void move(float) = 0;
 
