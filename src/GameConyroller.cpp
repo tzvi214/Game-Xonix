@@ -48,7 +48,7 @@ void GameController::run()
 			}
 			moveObj();
 			drawBoard();
-			
+			handleCollisionControler();
 			if (m_information.robotDied())
 			{
 				drawGameOver();
@@ -56,9 +56,7 @@ void GameController::run()
 			}
 			else if (finishedThisLevel())
 			{
-				std::cout << "\n you finished The level\n";
-				m_window.close();
-
+				
 				initBoard();
 				initWindow();
 				break;
@@ -76,7 +74,7 @@ void GameController::moveObj()
 	{
 		m_MobileVec[i]->move(m_TileVec, deltaTime);
 	}
-	handleCollisionControler();
+	
 
 }
 
@@ -224,12 +222,14 @@ bool GameController::finishedThisLevel()
 			if (m_TileVec[i][j]->isSave())
 				occupied++;
 
-	m_information.setClosePrecent((occupied / boardSize)*100);
-	return occupied >= (boardSize * percent);
+	m_information.setNowClosePrecent((occupied / boardSize)*100);
+
+	return m_information.finishLevel();
 }
 
 void GameController::drawGameOver()
 {
+	m_window.clear();
 	sf::Sprite gameOver(m_sfmlManager.getGameOverTex());
 	m_window.draw(gameOver);
 	m_window.display();

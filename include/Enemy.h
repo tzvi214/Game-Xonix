@@ -20,7 +20,7 @@ public:
 	
 private:
 	bool m_killedPlayer = false;
-	int m_speed = 200;
+	int m_speed = 300;
 	bool m_needRec = false;
 	SfmlManager& m_sfmlManager;
 	void cleanRec(std::vector<std::vector<std::unique_ptr<Tile>>>&);

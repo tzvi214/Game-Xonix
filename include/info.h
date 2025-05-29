@@ -12,6 +12,7 @@ public:
 	void setLife(int life) { m_life = life; }
 	void setNumEnemy(int numEnemy) { m_numEnemy = numEnemy; }
 	void setClosePrecent(int closePrecent) { m_closePrecent = closePrecent; }
+	void setNowClosePrecent(int precent) { m_nowClosePrecent = precent; }
 	void setLevel() { m_level++; }
 
 	int getTilesPerRow() const { return m_tilesPerRow; }
@@ -20,6 +21,7 @@ public:
 	void draw(sf::RenderWindow&);
 	void playerDisqualified() { m_life--; }
 	bool robotDied() const { return m_life <= 0; }
+	bool finishLevel() const { return m_nowClosePrecent >= m_closePrecent; }
 private:
 	int m_tilesPerRow;
 	int m_tilesPerCol;
@@ -27,6 +29,6 @@ private:
 	int m_numEnemy;
 	int m_closePrecent;
 	int m_level = 0;
-	int m_gool = 50;
+	int m_nowClosePrecent = 50;
 	SfmlManager& m_SfmlManager;
 };

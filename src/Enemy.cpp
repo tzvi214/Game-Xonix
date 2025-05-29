@@ -54,7 +54,7 @@ void Enemy::handleCollision(Player& player)
 		player.cleanTrail();
 		m_touchTril = false;
 	}
-	player.handleCollision(*this);
+//	player.handleCollision(*this);
 }
 
 void Enemy::rec(std::vector<std::vector<std::unique_ptr<Tile>>>& board, int i , int j)
