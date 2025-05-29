@@ -1,8 +1,7 @@
 #include "Info.h"
 
 Information::Information(SfmlManager& SfmlMan) : m_SfmlManager(SfmlMan)
-{
-}
+{}
 
 void Information::draw(sf::RenderWindow& window)
 {

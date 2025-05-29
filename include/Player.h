@@ -10,7 +10,6 @@ public:
 	virtual void updateInformation(Information&) override;
 	virtual void draw(sf::RenderWindow&) override;
 	virtual void move(std::vector<std::vector<std::unique_ptr<Tile>>>&, float) override ;
-	virtual void move(float) override;
 	bool needToDoRecursion() const { return m_needToDoRecursion; }
 
 	   // --- Double Dispatch ---

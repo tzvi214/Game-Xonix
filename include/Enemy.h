@@ -11,7 +11,6 @@ public:
 	virtual ~Enemy() = default;
 	virtual void draw(sf::RenderWindow&) override;
 	virtual void move(std::vector<std::vector<std::unique_ptr<Tile>>>&, float) override;
-	virtual void move(float) override {};
 
 	  // --- Double Dispatch ---
 	virtual void handleCollision(MobileObject&) override ;

@@ -20,34 +20,6 @@ void Player::draw(sf::RenderWindow& window)
 	window.draw(m_sprite);
 }
 
-void Player::move(float deltaTime)
-{
-
-	sf::Vector2f direction{ 0,0 };
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-	{
-		direction.y -= 1;
-	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-	{
-		direction.y += 1;
-	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-	{
-		direction.x -= 1;
-	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-	{
-		direction.x += 1;
-	}
-
-	float speed = 100;
-	// m_sprite.move(direction * deltaTime * speed);
-	m_location += direction * deltaTime * speed;
-
-
-}
-
 void Player::move(std::vector<std::vector<std::unique_ptr<Tile>>>& board, float deltaTime)
 {
 	chooseDirection();
@@ -80,8 +52,8 @@ void Player::move(std::vector<std::vector<std::unique_ptr<Tile>>>& board, float 
 //-------------------------------------
 sf::Vector2f Player::ArrangeLocation(sf::Vector2f loc)
 {
-	int newX = static_cast<int>(loc.x + SIZE::HalfPixelSize) / SIZE::TILE_SIZE;
-	int newY = static_cast<int>(loc.y + SIZE::HalfPixelSize) / SIZE::TILE_SIZE;
+	int newX = static_cast<int>(loc.x + SIZE::HALF_TILE_SIZE) / SIZE::TILE_SIZE;
+	int newY = static_cast<int>(loc.y + SIZE::HALF_TILE_SIZE) / SIZE::TILE_SIZE;
 	newX *= SIZE::TILE_SIZE;
 	newY *= SIZE::TILE_SIZE;
 	return sf::Vector2f{ static_cast<float>(newX), static_cast<float>(newY) };
@@ -136,8 +108,8 @@ void Player::checkLocation(std::vector<std::vector<std::unique_ptr<Tile>>>& boar
 	if (m_needToCleanTrail) cleanTrail(board);
 	m_needToDoRecursion = false;
 
-	if (board[m_location.x / SIZE::TILE_SIZE][m_location.y / SIZE::TILE_SIZE]->isSave() &&
-		(!board[nextLoc.x / SIZE::TILE_SIZE][nextLoc.y / SIZE::TILE_SIZE]->isSave()))
+	if (board[m_location.x / SIZE::TILE_SIZE][m_location.y / SIZE::TILE_SIZE]->isSafe() &&
+		(!board[nextLoc.x / SIZE::TILE_SIZE][nextLoc.y / SIZE::TILE_SIZE]->isSafe()))
 	{
 		m_inTrailMode = true;// if i went from safety place to not safety place
 		
@@ -145,7 +117,7 @@ void Player::checkLocation(std::vector<std::vector<std::unique_ptr<Tile>>>& boar
 
 	if (m_inTrailMode)
 	{
-		if(!board[nextLoc.x / SIZE::TILE_SIZE][nextLoc.y / SIZE::TILE_SIZE]->isSave())// i am still nat in savty place
+		if(!board[nextLoc.x / SIZE::TILE_SIZE][nextLoc.y / SIZE::TILE_SIZE]->isSafe())// i am still nat in savty place
 		{ 
 			int newTileX = static_cast<int>(nextLoc.x);
 			int newTileY = static_cast<int>(nextLoc.y);
@@ -161,9 +133,7 @@ void Player::checkLocation(std::vector<std::vector<std::unique_ptr<Tile>>>& boar
 			m_inTrailMode = false;
 			m_needToDoRecursion = true;
 			m_needToCleanTrail = true;
-			//cleanTrail(board);
-			//std::cout << "\nnew i am save agin i am doing rec and cleaning the trail\n";
-
+			
 		}
 	}
 	
@@ -171,7 +141,6 @@ void Player::checkLocation(std::vector<std::vector<std::unique_ptr<Tile>>>& boar
 //------------------------------------------------------------------------
 void Player::cleanTrail(std::vector<std::vector<std::unique_ptr<Tile>>>& board)
 {
-	//if (!m_needToCleanTrail) return;//double check
 	int row = board.size();
 	int col = board.at(0).size();
 	for (int i = 0; i < row; i++)
@@ -243,7 +212,6 @@ void Player::setDirection(sf::Vector2f newDirection)
 
 		m_location = ArrangeLocation(m_location);
 		m_direction = newDirection;
-		//std::cout << "jumping \n";
 	}
 
 }

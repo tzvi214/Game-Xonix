@@ -18,10 +18,8 @@ void Enemy::move(std::vector<std::vector<std::unique_ptr<Tile>>>& board, float d
 	choiseLocation(board, nextLoc);
 	sf::Vector2f nextLocation = sf::Vector2f(m_location.x + (m_direction.x * deltaTime * m_speed),
 			m_location.y + (m_direction.y * deltaTime * m_speed));
-	/*if ((!board[nextLocation.x / SIZE::TILE_SIZE][nextLocation.y / SIZE::TILE_SIZE]->isSave()))*/
 
 		m_location = nextLocation;
-	//if() if enemy toch the trail player liife --
 	if (m_needRec) { // new i am doing the recursion if i need to 
 		rec(board, (m_location.x / SIZE::TILE_SIZE), (m_location.y / SIZE::TILE_SIZE));
 		cleanRec(board);
@@ -54,14 +52,13 @@ void Enemy::handleCollision(Player& player)
 		player.cleanTrail();
 		m_touchTril = false;
 	}
-//	player.handleCollision(*this);
 }
 
 void Enemy::rec(std::vector<std::vector<std::unique_ptr<Tile>>>& board, int i , int j)
 {
 	int row = board.size();
 	int col = board.at(0).size();
-	if (i <= 0 || i >= row || j <= 0 || j >= col) return;// extra chack
+	if (i <= 0 || i >= row || j <= 0 || j >= col) return;// extra check
 
 	if (board[i][j]->shouldRecurseInto() && (!board[i][j]->iVisited())){
 		board[i][j]->updateVisit();
@@ -101,26 +98,14 @@ void Enemy::choiseLocation(std::vector<std::vector<std::unique_ptr<Tile>>>& boar
 			if (boardX < 0 || boardY < 0 || boardX >= board.size() || boardY >= board[0].size())
 				continue;
 
-			if (board[boardX][boardY]->isSave()) {
+			if (board[boardX][boardY]->isSafe()) {
 				hit = true;
 				break;
 			}
 		}
 
 		if (hit) {
-			/*if (m_direction == Diagonals::UpLeft) {
-				m_direction = Diagonals::DownLeft;
-			}
-			else if (m_direction == Diagonals::UpRight) {
-				m_direction = Diagonals::DownRight;
-			}
-			else if (m_direction == Diagonals::DownRight)
-			{
-				m_direction = Diagonals::UpLeft;
-			}
-			else if (m_direction == Diagonals::DownLeft) {
-				m_direction = Diagonals::DownRight;
-			}*/
+			
 			if (m_direction == Diagonals::UpLeft) {
 				m_direction = Diagonals::DownLeft;
 			}
@@ -133,9 +118,7 @@ void Enemy::choiseLocation(std::vector<std::vector<std::unique_ptr<Tile>>>& boar
 			else if (m_direction == Diagonals::UpRight) {
 				m_direction = Diagonals::UpLeft;
 			}
-		}
-		
-	
+		}	
 }
 
 void Enemy::cleanRec(std::vector<std::vector<std::unique_ptr<Tile>>>& board)

@@ -5,7 +5,5 @@ Tile::Tile(sf::Vector2f location, sf::Sprite sprite) :
 
 bool Tile::checkCollision(const sf::Sprite& other)
 {
-	
-		return m_sprite.getGlobalBounds().intersects(other.getGlobalBounds());
-	
+	return m_sprite.getGlobalBounds().intersects(other.getGlobalBounds());
 }

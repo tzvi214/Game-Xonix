@@ -1,6 +1,4 @@
-#include "TrailTile.h" // Fix circular include issue by using forward declaration
-// Fix circular include issue by using forward declaration  
-
+#include "TrailTile.h" 
 
 TrailTile::TrailTile(sf::Vector2f location, SfmlManager& SfmlMan) 
 	: Tile(location, sf::Sprite{ SfmlMan.getTilesTex() })

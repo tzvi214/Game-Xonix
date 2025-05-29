@@ -74,8 +74,6 @@ void GameController::moveObj()
 	{
 		m_MobileVec[i]->move(m_TileVec, deltaTime);
 	}
-	
-
 }
 
 void GameController::handleCollisionControler()
@@ -123,13 +121,11 @@ void GameController::updateInfoFromFile()
 
 void GameController::initBoard()
 {
-	// I want to line the board with empty tiles and the frame with solid tiles.
 	
 	int col = m_information.getTilesPerCol();
 	int row = m_information.getTilesPerRow();
 	m_TileVec.clear();
-	//m_MobileVec.resize(1 + m_information.getnumEnemy()); // 1 for player + num enemy.
-	// i changhed the resize of row and col
+	
 	m_TileVec.resize(row);
 	for (int i = 0; i < row; ++i)
 	{
@@ -152,7 +148,6 @@ void GameController::initBoard()
 	m_MobileVec.clear();
 	m_MobileVec.push_back(std::make_unique<Player>(sf::Vector2f(0 * SIZE::TILE_SIZE, 0 * SIZE::TILE_SIZE), m_sfmlManager));
 	m_MobileVec.push_back(std::make_unique<Enemy>(sf::Vector2f(5 * SIZE::TILE_SIZE, 2 * SIZE::TILE_SIZE), m_sfmlManager));
-
 }
 
 void GameController::initWindow()
@@ -188,8 +183,6 @@ void GameController::drawBoard()
 
 bool GameController::readLevels()
 {
-	std::cout << "\nreading from file \n";
-	//The line will contain the percentage of closed area required to win and the number of enemies
 	std::string line;
 	if (!std::getline(m_fileLevels, line))
 	{
@@ -207,7 +200,7 @@ bool GameController::readLevels()
 	}
 	m_information.setClosePrecent(closePrecent);
 	m_information.setNumEnemy(numEnemy);
-	m_information.setLevel(); // Increment the level
+	m_information.setLevel(); 
 
 	return true;
 }
@@ -219,7 +212,7 @@ bool GameController::finishedThisLevel()
 	double  occupied = 0;
 	for (int i = 0; i < m_information.getTilesPerRow(); i++)
 		for (int j = 0; j < m_information.getTilesPerRow(); j++)
-			if (m_TileVec[i][j]->isSave())
+			if (m_TileVec[i][j]->isSafe())
 				occupied++;
 
 	m_information.setNowClosePrecent((occupied / boardSize)*100);

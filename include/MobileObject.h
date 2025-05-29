@@ -13,7 +13,6 @@ public:
 	virtual ~MobileObject() = default;
 	virtual void updateInformation(Information&) {};
 	virtual void move(std::vector<std::vector<std::unique_ptr<Tile>>>&, float) = 0;
-	virtual void move(float) = 0;
 
 	// --- Double Dispatch ---
 	virtual void handleCollision(MobileObject&) =0;
